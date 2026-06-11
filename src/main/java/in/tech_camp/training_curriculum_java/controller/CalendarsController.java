@@ -53,7 +53,7 @@ public class CalendarsController {
     LocalDate todaysDate = LocalDate.now();
     List<PlanEntity> plans = planRepository.findByDateBetween(todaysDate, todaysDate.plusDays(6));
 
-    String[] LocalDate = { "(日)", "(月)", "(火)", "(水)", "(木)", "(金)", "(土)" };
+    String[] weekLabels = { "(日)", "(月)", "(火)", "(水)", "(木)", "(金)", "(土)" };
 
     for (int x = 0; x < 7; x++) {
       Map<String, Object> daymap = new HashMap<>();
@@ -61,7 +61,7 @@ public class CalendarsController {
 
       List<String> todayPlans = new ArrayList<>();
       for (PlanEntity plan : plans) {
-        if (plan.getDate().equals(currentDate)) {
+        if (currentDate.equals(plan.getDate())) {
           todayPlans.add(plan.getPlan());
         }
       }
@@ -69,11 +69,12 @@ public class CalendarsController {
       daymap.put("month", currentDate.getMonthValue());
       daymap.put("date", currentDate.getDayOfMonth());
       daymap.put("plans", todayPlans);
+      daymap.put("dayOfWeek",
+          weekLabels[currentDate.getDayOfWeek().getValue() % 7]);
 
       weekDays.add(daymap);
     }
 
-    return weekDays;
+    return weekDays; // ← ここは必ずメソッドの外（forの外）
   }
-
 }
